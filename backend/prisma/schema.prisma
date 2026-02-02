@@ -1,0 +1,349 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ============================================
+// CORE ENTITIES
+// ============================================
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  passwordHash  String    @map("password_hash")
+  firstName     String    @map("first_name")
+  lastName      String    @map("last_name")
+  role          UserRole  @default(RESEARCHER)
+  isActive      Boolean   @default(true) @map("is_active")
+  lastLoginAt   DateTime? @map("last_login_at")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  // Relations
+  institution   Institution? @relation(fields: [institutionId], references: [id])
+  institutionId String?      @map("institution_id")
+  researcher    Researcher?
+  refreshTokens RefreshToken[]
+
+  @@map("users")
+}
+
+model RefreshToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String   @map("user_id")
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("refresh_tokens")
+}
+
+enum UserRole {
+  SUPER_ADMIN
+  INSTITUTION_ADMIN
+  DEPARTMENT_HEAD
+  RESEARCHER
+  SUPPORT_STAFF
+  CONSULTANT
+}
+
+// ============================================
+// INSTITUTION & DEPARTMENT
+// ============================================
+
+model Institution {
+  id              String            @id @default(cuid())
+  name            String
+  shortName       String?           @map("short_name")
+  type            InstitutionType
+  country         String            @default("UK")
+  region          String?
+  website         String?
+  logoUrl         String?           @map("logo_url")
+  isActive        Boolean           @default(true) @map("is_active")
+  subscriptionTier SubscriptionTier @default(FREE) @map("subscription_tier")
+  createdAt       DateTime          @default(now()) @map("created_at")
+  updatedAt       DateTime          @updatedAt @map("updated_at")
+
+  // Relations
+  users       User[]
+  departments Department[]
+  researchers Researcher[]
+  grants      Grant[]
+
+  @@map("institutions")
+}
+
+model Department {
+  id            String   @id @default(cuid())
+  name          String
+  code          String?
+  faculty       String?
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  institution   Institution  @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  institutionId String       @map("institution_id")
+  researchers   Researcher[]
+
+  @@unique([institutionId, code])
+  @@map("departments")
+}
+
+enum InstitutionType {
+  RUSSELL_GROUP
+  POST_92
+  SPECIALIST
+  RESEARCH_INTENSIVE
+  TEACHING_FOCUSED
+  OTHER
+}
+
+enum SubscriptionTier {
+  FREE
+  STARTER
+  PROFESSIONAL
+  ENTERPRISE
+}
+
+// ============================================
+// RESEARCHER PROFILE
+// ============================================
+
+model Researcher {
+  id              String   @id @default(cuid())
+  orcidId         String?  @unique @map("orcid_id")
+  title           String?
+  position        String?
+  researchAreas   String[] @map("research_areas")
+  hIndex          Int?     @map("h_index")
+  totalCitations  Int?     @map("total_citations")
+  yearsExperience Int?     @map("years_experience")
+  contractType    ContractType @default(PERMANENT) @map("contract_type")
+  fte             Decimal  @default(1.0)
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId        String      @unique @map("user_id")
+  institution   Institution @relation(fields: [institutionId], references: [id])
+  institutionId String      @map("institution_id")
+  department    Department? @relation(fields: [departmentId], references: [id])
+  departmentId  String?     @map("department_id")
+
+  timeLogs      TimeLog[]
+  grants        GrantResearcher[]
+
+  @@map("researchers")
+}
+
+enum ContractType {
+  PERMANENT
+  FIXED_TERM
+  HOURLY
+  VISITING
+  EMERITUS
+}
+
+// ============================================
+// GRANT MANAGEMENT
+// ============================================
+
+model Grant {
+  id              String      @id @default(cuid())
+  title           String
+  reference       String?
+  funder          String
+  funderType      FunderType  @map("funder_type")
+  amount          Decimal
+  currency        String      @default("GBP")
+  status          GrantStatus @default(DRAFT)
+  startDate       DateTime?   @map("start_date")
+  endDate         DateTime?   @map("end_date")
+  submissionDate  DateTime?   @map("submission_date")
+  decisionDate    DateTime?   @map("decision_date")
+  successRate     Decimal?    @map("success_rate")
+  description     String?
+  createdAt       DateTime    @default(now()) @map("created_at")
+  updatedAt       DateTime    @updatedAt @map("updated_at")
+
+  // Relations
+  institution   Institution       @relation(fields: [institutionId], references: [id])
+  institutionId String            @map("institution_id")
+  researchers   GrantResearcher[]
+  timeLogs      TimeLog[]
+
+  @@map("grants")
+}
+
+model GrantResearcher {
+  id           String   @id @default(cuid())
+  role         GrantRole @default(CO_INVESTIGATOR)
+  allocation   Decimal   @default(0) // Percentage of time allocated
+  createdAt    DateTime  @default(now()) @map("created_at")
+
+  // Relations
+  grant        Grant      @relation(fields: [grantId], references: [id], onDelete: Cascade)
+  grantId      String     @map("grant_id")
+  researcher   Researcher @relation(fields: [researcherId], references: [id], onDelete: Cascade)
+  researcherId String     @map("researcher_id")
+
+  @@unique([grantId, researcherId])
+  @@map("grant_researchers")
+}
+
+enum FunderType {
+  UKRI
+  HORIZON_EUROPE
+  CHARITY
+  INDUSTRY
+  GOVERNMENT
+  INTERNAL
+  OTHER
+}
+
+enum GrantStatus {
+  DRAFT
+  IN_PREPARATION
+  SUBMITTED
+  UNDER_REVIEW
+  AWARDED
+  REJECTED
+  ACTIVE
+  COMPLETED
+  TERMINATED
+}
+
+enum GrantRole {
+  PRINCIPAL_INVESTIGATOR
+  CO_INVESTIGATOR
+  RESEARCHER
+  TECHNICIAN
+  ADMINISTRATOR
+}
+
+// ============================================
+// TIME TRACKING
+// ============================================
+
+model TimeLog {
+  id           String       @id @default(cuid())
+  date         DateTime     @db.Date
+  hours        Decimal
+  activityType ActivityType @map("activity_type")
+  category     TimeCategory
+  description  String?
+  createdAt    DateTime     @default(now()) @map("created_at")
+  updatedAt    DateTime     @updatedAt @map("updated_at")
+
+  // Relations
+  researcher   Researcher @relation(fields: [researcherId], references: [id], onDelete: Cascade)
+  researcherId String     @map("researcher_id")
+  grant        Grant?     @relation(fields: [grantId], references: [id])
+  grantId      String?    @map("grant_id")
+
+  @@index([researcherId, date])
+  @@index([activityType])
+  @@map("time_logs")
+}
+
+enum TimeCategory {
+  RESEARCH
+  TEACHING
+  ADMINISTRATION
+  SERVICE
+  OTHER
+}
+
+enum ActivityType {
+  // Research Activities
+  RESEARCH_ACTIVE
+  RESEARCH_WRITING
+  RESEARCH_DATA_ANALYSIS
+  RESEARCH_LAB_WORK
+  RESEARCH_FIELDWORK
+  RESEARCH_COLLABORATION
+
+  // Teaching Activities
+  TEACHING_LECTURES
+  TEACHING_SEMINARS
+  TEACHING_SUPERVISION
+  TEACHING_MARKING
+  TEACHING_PREPARATION
+  TEACHING_OFFICE_HOURS
+
+  // Admin Activities - Grant Related
+  ADMIN_GRANT_WRITING
+  ADMIN_GRANT_BUDGETING
+  ADMIN_GRANT_REPORTING
+  ADMIN_GRANT_COMPLIANCE
+  ADMIN_GRANT_REVIEW
+
+  // Admin Activities - General
+  ADMIN_MEETINGS
+  ADMIN_EMAILS
+  ADMIN_COMMITTEES
+  ADMIN_HR_RECRUITMENT
+  ADMIN_FINANCE
+  ADMIN_ETHICS_APPROVAL
+  ADMIN_DATA_MANAGEMENT
+
+  // Service Activities
+  SERVICE_PEER_REVIEW
+  SERVICE_EDITORIAL
+  SERVICE_EXTERNAL_EXAMINING
+  SERVICE_PUBLIC_ENGAGEMENT
+  SERVICE_INDUSTRY_LIAISON
+
+  // Other
+  OTHER_TRAINING
+  OTHER_CONFERENCES
+  OTHER_NETWORKING
+  OTHER_LEAVE
+}
+
+// ============================================
+// ANALYTICS & BENCHMARKS
+// ============================================
+
+model AdminBottleneck {
+  id               String       @id @default(cuid())
+  institutionId    String       @map("institution_id")
+  departmentId     String?      @map("department_id")
+  activityType     ActivityType @map("activity_type")
+  totalHours       Decimal      @map("total_hours")
+  researcherCount  Int          @map("researcher_count")
+  avgHoursPerUser  Decimal      @map("avg_hours_per_user")
+  periodStart      DateTime     @map("period_start")
+  periodEnd        DateTime     @map("period_end")
+  calculatedAt     DateTime     @default(now()) @map("calculated_at")
+
+  @@index([institutionId, periodStart])
+  @@map("admin_bottlenecks")
+}
+
+model SectorBenchmark {
+  id               String          @id @default(cuid())
+  institutionType  InstitutionType @map("institution_type")
+  metric           String
+  value            Decimal
+  percentile25     Decimal         @map("percentile_25")
+  percentile50     Decimal         @map("percentile_50")
+  percentile75     Decimal         @map("percentile_75")
+  sampleSize       Int             @map("sample_size")
+  periodStart      DateTime        @map("period_start")
+  periodEnd        DateTime        @map("period_end")
+  calculatedAt     DateTime        @default(now()) @map("calculated_at")
+
+  @@unique([institutionType, metric, periodStart])
+  @@map("sector_benchmarks")
+}
