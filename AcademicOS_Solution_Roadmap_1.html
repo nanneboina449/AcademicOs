@@ -1,0 +1,1325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AcademicOS - Solution Roadmap, LLD & User Stories</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #1F497D;
+            --primary-light: #2E5090;
+            --accent: #4472C4;
+            --bg-light: #F5F7FA;
+            --text-dark: #1a1a1a;
+            --text-light: #666;
+            --border: #E0E4E8;
+            --success: #28a745;
+            --warning: #ffc107;
+            --danger: #dc3545;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            color: var(--text-dark);
+            line-height: 1.6;
+            background: #fff;
+        }
+
+        /* Header & Navigation */
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            padding: 3rem 2rem;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.95;
+            margin-bottom: 0.5rem;
+        }
+
+        header .subtitle {
+            font-size: 0.95rem;
+            opacity: 0.85;
+        }
+
+        /* Navigation */
+        nav {
+            background: #f8f9fa;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 130px;
+            z-index: 50;
+            display: flex;
+            gap: 0;
+            overflow-x: auto;
+        }
+
+        nav a {
+            padding: 1rem 1.5rem;
+            text-decoration: none;
+            color: var(--text-dark);
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        nav a:hover {
+            background: var(--bg-light);
+            border-bottom-color: var(--accent);
+        }
+
+        nav a.active {
+            background: var(--bg-light);
+            border-bottom-color: var(--accent);
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Sections */
+        section {
+            margin-bottom: 3rem;
+            scroll-margin-top: 250px;
+        }
+
+        h2 {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid var(--accent);
+        }
+
+        h3 {
+            font-size: 1.5rem;
+            color: var(--primary-light);
+            margin-top: 1.5rem;
+            margin-bottom: 0.8rem;
+        }
+
+        h4 {
+            font-size: 1.2rem;
+            color: var(--accent);
+            margin-top: 1rem;
+            margin-bottom: 0.6rem;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            color: var(--text-light);
+            line-height: 1.8;
+        }
+
+        /* Executive Summary */
+        .summary-card {
+            background: linear-gradient(135deg, #F5F7FA 0%, #E8F0FF 100%);
+            border-left: 4px solid var(--accent);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 4px;
+        }
+
+        /* Lists */
+        ul, ol {
+            margin-left: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        ul li, ol li {
+            margin-bottom: 0.6rem;
+            color: var(--text-light);
+            line-height: 1.7;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            background: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        th {
+            background: var(--primary);
+            color: white;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        tr:hover {
+            background: var(--bg-light);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Phase Cards */
+        .phase-card {
+            background: white;
+            border: 2px solid var(--border);
+            border-left: 4px solid var(--accent);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+
+        .phase-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border-left-color: var(--primary);
+        }
+
+        .phase-card h4 {
+            margin-top: 0;
+        }
+
+        .phase-badge {
+            display: inline-block;
+            background: var(--accent);
+            color: white;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin-bottom: 0.8rem;
+            font-weight: 600;
+        }
+
+        /* User Story */
+        .user-story {
+            background: white;
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--accent);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 4px;
+        }
+
+        .story-id {
+            background: var(--bg-light);
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 3px;
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 0.9rem;
+            margin-right: 0.5rem;
+        }
+
+        .story-title {
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 1.1rem;
+        }
+
+        .story-narrative {
+            font-style: italic;
+            color: var(--text-light);
+            margin: 0.8rem 0;
+            padding: 0.8rem;
+            background: var(--bg-light);
+            border-left: 3px solid var(--accent);
+            padding-left: 1rem;
+        }
+
+        .acceptance-criteria {
+            margin-top: 1rem;
+        }
+
+        .acceptance-criteria h5 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .acceptance-criteria ul {
+            margin-left: 1.5rem;
+        }
+
+        .acceptance-criteria li {
+            font-size: 0.95rem;
+        }
+
+        /* Technology Stack */
+        .tech-item {
+            background: white;
+            padding: 1rem;
+            margin: 0.8rem 0;
+            border-left: 3px solid var(--accent);
+            border-radius: 3px;
+        }
+
+        .tech-item strong {
+            color: var(--primary);
+            display: block;
+            margin-bottom: 0.3rem;
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding: 1rem 0;
+        }
+
+        .timeline-item {
+            padding-left: 2rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .timeline-item:before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0.25rem;
+            width: 12px;
+            height: 12px;
+            background: var(--accent);
+            border: 3px solid white;
+            border-radius: 50%;
+            box-shadow: 0 0 0 2px var(--accent);
+        }
+
+        .timeline-item:after {
+            content: '';
+            position: absolute;
+            left: 5px;
+            top: 1.5rem;
+            width: 2px;
+            height: calc(100% + 0.5rem);
+            background: var(--border);
+        }
+
+        .timeline-item:last-child:after {
+            display: none;
+        }
+
+        .timeline-item h4 {
+            margin-top: 0;
+        }
+
+        /* KPI Cards */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .kpi-card {
+            background: white;
+            border: 1px solid var(--border);
+            padding: 1.5rem;
+            border-radius: 4px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .kpi-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+
+        .kpi-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin: 0.5rem 0;
+        }
+
+        .kpi-label {
+            font-size: 0.95rem;
+            color: var(--text-light);
+        }
+
+        /* Tabs */
+        .tabs {
+            margin: 1.5rem 0;
+        }
+
+        .tab-buttons {
+            display: flex;
+            border-bottom: 2px solid var(--border);
+            gap: 0;
+            flex-wrap: wrap;
+        }
+
+        .tab-button {
+            background: none;
+            border: none;
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--text-light);
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .tab-button:hover {
+            color: var(--primary);
+        }
+
+        .tab-button.active {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+
+        .tab-content {
+            display: none;
+            padding: 1.5rem 0;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Callouts */
+        .callout {
+            padding: 1rem;
+            margin: 1.5rem 0;
+            border-left: 4px solid;
+            border-radius: 4px;
+        }
+
+        .callout.info {
+            background: #E8F4FD;
+            border-color: var(--accent);
+            color: var(--primary);
+        }
+
+        .callout.success {
+            background: #D4EDDA;
+            border-color: var(--success);
+            color: #155724;
+        }
+
+        .callout.warning {
+            background: #FFF3CD;
+            border-color: var(--warning);
+            color: #856404;
+        }
+
+        .callout.danger {
+            background: #F8D7DA;
+            border-color: var(--danger);
+            color: #721C24;
+        }
+
+        /* Architecture Diagram */
+        .diagram {
+            background: var(--bg-light);
+            padding: 1.5rem;
+            border-radius: 4px;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            line-height: 1.4;
+            color: var(--text-dark);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--primary);
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 3rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8rem;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+            }
+
+            .container {
+                padding: 1rem;
+            }
+
+            nav {
+                overflow-x: auto;
+            }
+
+            table {
+                font-size: 0.9rem;
+            }
+
+            th, td {
+                padding: 0.7rem;
+            }
+
+            .kpi-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Print */
+        @media print {
+            nav {
+                display: none;
+            }
+
+            header {
+                position: static;
+            }
+
+            section {
+                page-break-inside: avoid;
+            }
+        }
+
+        .back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 50px;
+            height: 50px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.5rem;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 40;
+        }
+
+        .back-to-top.show {
+            opacity: 0.8;
+        }
+
+        .back-to-top:hover {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🎓 AcademicOS</h1>
+        <p>Institutional Intelligence Platform for UK/EU Universities</p>
+        <div class="subtitle">Solution Roadmap, Low-Level Design & User Stories</div>
+        <div style="margin-top: 1rem; font-size: 0.9rem;">
+            Development Timeline: 18 Months | Version 1.0: February 2026 | Version 2.0: August 2026
+        </div>
+    </header>
+
+    <nav>
+        <a href="#overview">Overview</a>
+        <a href="#roadmap">Roadmap</a>
+        <a href="#architecture">Architecture</a>
+        <a href="#user-stories">User Stories</a>
+        <a href="#sprints">Sprints</a>
+        <a href="#kpis">Success Metrics</a>
+        <a href="#risks">Risks</a>
+    </nav>
+
+    <div class="container">
+        <!-- Executive Summary -->
+        <section id="overview">
+            <h2>Executive Summary</h2>
+            
+            <h3>Product Overview</h3>
+            <p>AcademicOS is an integrated strategic advisory platform that combines data analytics, automation, and consulting services to address the interconnected crises facing UK/EU universities:</p>
+            
+            <ul>
+                <li><strong>Research Administration Burden:</strong> 42% of researcher time lost to admin</li>
+                <li><strong>Financial Sustainability Crisis:</strong> £6.2B annual shortfall, 49% in deficit</li>
+                <li><strong>Student Mental Health & Retention:</strong> 450% increase in disclosures, 28% dropout rise</li>
+                <li><strong>Digital Transformation Gaps:</strong> 91% of students use AI, 36% receive institutional support</li>
+                <li><strong>Staffing & Researcher Precarity:</strong> 15,000+ jobs at risk</li>
+                <li><strong>International Student Volatility:</strong> 31% drop in sponsored study visas</li>
+            </ul>
+
+            <div class="summary-card">
+                <h4>Four Integrated Modules Address These Challenges:</h4>
+                <table style="margin-top: 1rem;">
+                    <thead>
+                        <tr>
+                            <th>Module</th>
+                            <th>Key Problem Solved</th>
+                            <th>Revenue Stream</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Research Admin Analytics</strong></td>
+                            <td>42% of researcher time lost to admin</td>
+                            <td>SaaS: £8-15k/year per institution</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Financial Analytics</strong></td>
+                            <td>72% in deficit, £6.2B funding gap</td>
+                            <td>SaaS + Advisory: £50-100k per engagement</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Student Retention</strong></td>
+                            <td>450% mental health disclosures, 28% dropout rise</td>
+                            <td>SaaS: £5-12k/year per institution</td>
+                        </tr>
+                        <tr>
+                            <td><strong>AI Governance</strong></td>
+                            <td>92% of students use AI, 36% receive institutional support</td>
+                            <td>Advisory: £30-80k per engagement</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>Business Model</h3>
+            <p>AcademicOS combines three revenue streams:</p>
+            <ul>
+                <li><strong>SaaS Analytics Platform:</strong> £5k-25k/year institutional, £50-200/researcher/month</li>
+                <li><strong>Professional Services:</strong> £50-150k per strategic engagement</li>
+                <li><strong>Implementation Support:</strong> £20-40k per module rollout</li>
+            </ul>
+
+            <div class="callout success">
+                <strong>Market Opportunity:</strong> Universities facing existential pressure will pay premium rates for guidance that helps them survive and thrive. Combined SaaS + Consulting model targets £2-5M ARR by Year 2.
+            </div>
+        </section>
+
+        <!-- Solution Roadmap -->
+        <section id="roadmap">
+            <h2>Solution Roadmap (18 Months)</h2>
+            
+            <div class="phase-card">
+                <span class="phase-badge">Phase 1: Foundation & Research Admin (Months 1-4)</span>
+                <h4>Focus: Establish product-market fit with research administration module</h4>
+                <ul>
+                    <li>Research Admin Analytics Dashboard (time allocation tracking, grant pipeline)</li>
+                    <li>Grant Management Integration (PURE, institutional databases)</li>
+                    <li>Time & Workload Tracking (survey + automated integration)</li>
+                    <li>Admin Burden Analysis Tool (identify bottlenecks in grant lifecycle)</li>
+                    <li>MVP Web Dashboard (early-access prototype)</li>
+                    <li>Technical Foundation (AWS infrastructure, auth, APIs, ETL pipelines)</li>
+                </ul>
+                <p><strong>Deliverables:</strong> MVP dashboard, institutional data integration, 5 beta customers</p>
+                <p><strong>Target ARR:</strong> £0 (beta), Learning & validation</p>
+            </div>
+
+            <div class="phase-card">
+                <span class="phase-badge">Phase 2: Financial & Student Analytics (Months 5-10)</span>
+                <h4>Focus: Expand to financial sustainability and student retention</h4>
+                <ul>
+                    <li>Financial Sustainability Module (deficit forecasting, scenario modeling)</li>
+                    <li>Revenue Diversification Analytics (benchmarking, KPIs)</li>
+                    <li>Student Risk Analytics (ML models for dropout, mental health, financial hardship)</li>
+                    <li>Retention Intervention Toolkit (automated alerts, intervention playbooks)</li>
+                    <li>Dashboard 2.0 (multi-institution analytics, custom KPI building)</li>
+                    <li>API & Integrations (connect to student IS, finance systems)</li>
+                </ul>
+                <p><strong>Deliverables:</strong> Financial + Student modules, 10-15 paying institutions, API marketplace</p>
+                <p><strong>Target ARR:</strong> £150-300k</p>
+            </div>
+
+            <div class="phase-card">
+                <span class="phase-badge">Phase 3: AI Strategy & Governance (Months 11-15)</span>
+                <h4>Focus: Launch AI governance module and consulting services</h4>
+                <ul>
+                    <li>AI Policy Framework (assessment tool, recommended policies)</li>
+                    <li>Assessment Redesign Assistant (guidance for maintaining academic integrity)</li>
+                    <li>Staff Readiness & Training (self-assessment, learning paths)</li>
+                    <li>Student GenAI Literacy (curriculum recommendations, assessment frameworks)</li>
+                    <li>Governance Dashboard (monitor AI adoption, risk assessment)</li>
+                    <li>Consulting Services Templates (pre-built strategy documents, case studies)</li>
+                </ul>
+                <p><strong>Deliverables:</strong> AI module, 5-8 institutions through consulting, training content library</p>
+                <p><strong>Target ARR:</strong> £600-900k (SaaS + Consulting)</p>
+            </div>
+
+            <div class="phase-card">
+                <span class="phase-badge">Phase 4: Ecosystem & Scale (Months 16-18)</span>
+                <h4>Focus: Scale customer base and establish ecosystem partnerships</h4>
+                <ul>
+                    <li>Partner Integrations (Elsevier, Tableau, Workday connectors)</li>
+                    <li>Mobile Application (iOS/Android dashboards)</li>
+                    <li>Benchmarking & Peer Networks (anonymized sector benchmarks, learning cohorts)</li>
+                    <li>Consulting Services Expansion (formal advisory practice, train partners)</li>
+                    <li>Version 2.0 Planning (predictive funding optimization, DEI analytics)</li>
+                </ul>
+                <p><strong>Deliverables:</strong> 20-25 institutions, established consulting practice, Version 2.0 blueprint</p>
+                <p><strong>Target ARR:</strong> £2-5M</p>
+            </div>
+        </section>
+
+        <!-- Architecture -->
+        <section id="architecture">
+            <h2>Low-Level Design (Technical Architecture)</h2>
+
+            <h3>System Architecture Overview</h3>
+            <div class="diagram">
+┌─────────────────────────────────────────────────────────────────┐
+│                     CLIENT TIER (Web/Mobile)                     │
+│  React Dashboard | Mobile App (React Native) | Consulting Portal│
+└────────────┬────────────────────────────────────────────────────┘
+             │
+┌────────────▼────────────────────────────────────────────────────┐
+│                    API GATEWAY TIER                               │
+│  Authentication | Rate Limiting | Request Validation | Logging   │
+│  (Kong/AWS API Gateway)                                           │
+└────────────┬────────────────────────────────────────────────────┘
+             │
+    ┌────────┴────────┬──────────────┬──────────────┬────────────┐
+    │                 │              │              │            │
+┌───▼──┐         ┌────▼────┐   ┌────▼─────┐  ┌────▼──┐   ┌──────▼──┐
+│Admin │         │Research │   │ Financial│  │Student│   │ AI      │
+│API   │         │API      │   │API       │  │API    │   │Policy   │
+│Svc   │         │Svc      │   │Svc       │  │Svc    │   │API Svc  │
+└─┬────┘         └────┬────┘   └────┬─────┘  └────┬──┘   └──────┬──┘
+  │                   │             │             │            │
+  └───────────────────┼─────────────┼─────────────┴────────────┘
+                      │
+          ┌───────────▼──────────────┐
+          │  DATA PROCESSING LAYER   │
+          │ ┌──────────────────────┐ │
+          │ │ ETL Pipeline         │ │  (Apache Airflow)
+          │ │ Data Validation      │ │
+          │ │ ML Model Training    │ │
+          │ │ Analytics Engine     │ │
+          │ └──────────────────────┘ │
+          └───────────┬──────────────┘
+                      │
+          ┌───────────▼──────────────────────┐
+          │      DATA LAYER                   │
+          │ ┌─────────────────────────────┐   │
+          │ │ PostgreSQL (Analytics DB)   │   │
+          │ │ Redis Cache                 │   │
+          │ │ TimescaleDB (Time-series)   │   │
+          │ │ S3 (File Storage)           │   │
+          │ └─────────────────────────────┘   │
+          └───────┬─────────────────────────┘
+                  │
+    ┌─────────────┼──────────────┐
+    │             │              │
+┌───▼────┐  ┌─────▼──────┐  ┌────▼────┐
+│ PURE   │  │ Workday    │  │ Student │
+│ API    │  │ HCM        │  │ IS      │
+│ Conn   │  │ API        │  │ Conn    │
+└────────┘  └────────────┘  └─────────┘
+            </div>
+
+            <h3>Technology Stack</h3>
+            <div class="tech-item">
+                <strong>Frontend</strong>
+                React 18, TypeScript, Recharts, TailwindCSS
+                <br><em>Fast, responsive, component reusability</em>
+            </div>
+            <div class="tech-item">
+                <strong>Backend</strong>
+                Java 21, Spring Boot 3, RESTful API + GraphQL
+                <br><em>Your expertise, enterprise-grade, high performance</em>
+            </div>
+            <div class="tech-item">
+                <strong>Database</strong>
+                PostgreSQL 15, TimescaleDB, Redis 7
+                <br><em>ACID compliance, time-series, caching</em>
+            </div>
+            <div class="tech-item">
+                <strong>Data Pipeline</strong>
+                Apache Airflow, Python, Spark for heavy lifting
+                <br><em>Orchestrate ETL, ML model training jobs</em>
+            </div>
+            <div class="tech-item">
+                <strong>Infrastructure</strong>
+                AWS (EC2, RDS, S3, CloudFront), Terraform
+                <br><em>Your strength, multi-AZ, auto-scaling, secure</em>
+            </div>
+            <div class="tech-item">
+                <strong>Deployment</strong>
+                Docker, Kubernetes, GitLab CI/CD
+                <br><em>Fast, repeatable, automated deployments</em>
+            </div>
+            <div class="tech-item">
+                <strong>Monitoring</strong>
+                Datadog, ELK Stack, Prometheus, Grafana
+                <br><em>Observability, alerting, performance insights</em>
+            </div>
+
+            <h3>Core API Endpoints</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Method</th>
+                        <th>Endpoint</th>
+                        <th>Input</th>
+                        <th>Output</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>POST</td>
+                        <td>/v1/researchers/{id}/time-logs</td>
+                        <td>hours, activity_type, date</td>
+                        <td>Created log id, summary</td>
+                    </tr>
+                    <tr>
+                        <td>GET</td>
+                        <td>/v1/researchers/{id}/analytics</td>
+                        <td>date_from, date_to</td>
+                        <td>Time allocation %, trends, benchmarks</td>
+                    </tr>
+                    <tr>
+                        <td>POST</td>
+                        <td>/v1/grants</td>
+                        <td>funder, amount, title, deadline</td>
+                        <td>Grant ID, created_at</td>
+                    </tr>
+                    <tr>
+                        <td>GET</td>
+                        <td>/v1/institutions/{id}/admin-bottlenecks</td>
+                        <td>None</td>
+                        <td>Top bottlenecks ranked by time spent</td>
+                    </tr>
+                    <tr>
+                        <td>GET</td>
+                        <td>/v1/grants/success-rate</td>
+                        <td>funder, dept, time_period</td>
+                        <td>Success rate %, trend, benchmarks</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Security & Compliance</h3>
+            <ul>
+                <li><strong>OAuth 2.0 + OpenID Connect:</strong> Institutional SSO (Azure AD, Okta)</li>
+                <li><strong>Role-Based Access Control (RBAC):</strong> Admin, dept head, researcher, student, consultant</li>
+                <li><strong>Data Encryption:</strong> AES-256 at rest, TLS 1.3 in transit</li>
+                <li><strong>GDPR Compliance:</strong> Data residency in EU, right to deletion, consent management</li>
+                <li><strong>HIPAA-Equivalent:</strong> Student mental health data segregated, encrypted, audit-logged</li>
+                <li><strong>SOC 2 Type II:</strong> Target for Phase 2</li>
+                <li><strong>Multi-Tenancy:</strong> All institutional data isolated by institution_id</li>
+            </ul>
+        </section>
+
+        <!-- User Stories -->
+        <section id="user-stories">
+            <h2>User Stories & Acceptance Criteria</h2>
+
+            <h3>User Personas</h3>
+            <ul>
+                <li><strong>Dr. Sarah Chen:</strong> Research-intensive academic, 5 grants/year, frustrated by 40% admin time</li>
+                <li><strong>James Williams:</strong> Research Services Director, manages £50M portfolio, needs visibility into bottlenecks</li>
+                <li><strong>Prof. Michael O'Brien:</strong> PVC Finance, facing £20M deficit, needs scenario modeling</li>
+                <li><strong>Alice Patel:</strong> Student Support Coordinator, identifies 3-4 at-risk students/week manually</li>
+                <li><strong>Dr. Emma Rodriguez:</strong> CTO, implementing AI governance, needs frameworks & staff readiness assessment</li>
+                <li><strong>Tom Lewis:</strong> External Consultant, delivering strategy, needs data assets & case studies</li>
+            </ul>
+
+            <h3>Research Administration Module</h3>
+
+            <div class="user-story">
+                <div><span class="story-id">RA-001</span><span class="story-title">Researcher Dashboard</span></div>
+                <div class="story-narrative">As a researcher, I want to see a real-time breakdown of how I spend my time (research vs. admin) so that I can understand where my time is lost and advocate for change.</div>
+                <div class="acceptance-criteria">
+                    <h5>Acceptance Criteria:</h5>
+                    <ul>
+                        <li>Dashboard displays time allocation pie chart (research, teaching, admin, other)</li>
+                        <li>Admin time further broken down by activity (grant writing, reporting, compliance, meetings)</li>
+                        <li>Comparison to department average and sector benchmarks</li>
+                        <li>Trends over 12 months showing admin time changes</li>
+                        <li>Export to PDF for sharing with department leadership</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="user-story">
+                <div><span class="story-id">RA-002</span><span class="story-title">Grant Application Pipeline</span></div>
+                <div class="story-narrative">As a researcher, I want to track all my grant applications in one place and see admin time spent at each stage so I can optimize my process.</div>
+                <div class="acceptance-criteria">
+                    <h5>Acceptance Criteria:</h5>
+                    <ul>
+                        <li>View all active/submitted applications with status, deadline, funding body</li>
+                        <li>Log admin hours for each application (pre-grant, submission, post-award)</li>
+                        <li>See average time to completion by funder (UKRI vs. Horizon Europe vs. charity)</li>
+                        <li>Identify which stages take longest (proposal writing? Justification sections?)</li>
+                        <li>Mobile app to log time on-the-go</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="user-story">
+                <div><span class="story-id">RA-003</span><span class="story-title">Admin Bottleneck Identification</span></div>
+                <div class="story-narrative">As a Research Services Director, I want to identify which administrative processes are consuming the most researcher time so we can prioritize process improvement.</div>
+                <div class="acceptance-criteria">
+                    <h5>Acceptance Criteria:</h5>
+                    <ul>
+                        <li>Heat map showing time spent on each admin function (by stage, funder, department)</li>
+                        <li>Identify top 5 time-consuming activities across the institution</li>
+                        <li>Drill-down to see which departments, funder types, or application stages are problematic</li>
+                        <li>Benchmark against other institutions (anonymized)</li>
+                        <li>Generate report recommending which processes to redesign first</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>Financial Sustainability Module</h3>
+
+            <div class="user-story">
+                <div><span class="story-id">FIN-001</span><span class="story-title">5-Year Deficit Forecast</span></div>
+                <div class="story-narrative">As a Pro-Vice Chancellor for Finance, I want to forecast our financial position under multiple scenarios so I can understand the severity of our deficit and plan responses.</div>
+                <div class="acceptance-criteria">
+                    <h5>Acceptance Criteria:</h5>
+                    <ul>
+                        <li>Model shows base case, optimistic, and pessimistic scenarios</li>
+                        <li>Line graph showing projected cash position quarterly for 5 years</li>
+                        <li>Identify when cash reserves are exhausted (if no action)</li>
+                        <li>Show sensitivity analysis (which variables matter most?)</li>
+                        <li>Export to Excel for Board presentation</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="user-story">
+                <div><span class="story-id">FIN-002</span><span class="story-title">International Student Revenue Volatility</span></div>
+                <div class="story-narrative">As a PVC Finance, I want to model the impact of international student enrollment changes so I can quantify our dependency risk and develop contingencies.</div>
+                <div class="acceptance-criteria">
+                    <h5>Acceptance Criteria:</h5>
+                    <ul>
+                        <li>Current intl. student revenue by country/region with multi-year trends</li>
+                        <li>Model scenarios: 10% recruitment drop, 20% drop, currency crisis in key market</li>
+                        <li>See how each scenario impacts overall institutional deficit/surplus</li>
+                        <li>Identify geographic concentration risk</li>
+                        <li>Recommendations for geographic diversification</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>Student Retention & Mental Health Module</h3>
+
+            <div class="user-story">
+                <div><span class="story-id">STU-001</span><span class="story-title">At-Risk Student Predictions</span></div>
+                <div class="story-narrative">As a student support coordinator, I want to identify students at risk of dropping out before it's too late so we can intervene with support.</div>
+                <div class="acceptance-criteria">
+                    <h5>Acceptance Criteria:</h5>
+                    <ul>
+                        <li>Dashboard shows list of students ranked by dropout risk score (0-100)</li>
+                        <li>Risk factors broken down (academic performance, engagement, financial hardship, mental health flags)</li>
+                        <li>Historical data: how accurate was last term's predictions?</li>
+                        <li>See timeline of risk changes for individual students</li>
+                        <li>Export at-risk list for action planning</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="user-story">
+                <div><span class="story-id">STU-002</span><span class="story-title">Mental Health Risk Assessment</span></div>
+                <div class="story-narrative">As a student support services manager, I want to identify students showing mental health risk signals so we can proactively offer support.</div>
+                <div class="acceptance-criteria">
+                    <h5>Acceptance Criteria:</h5>
+                    <ul>
+                        <li>System flags students based on disclosed issues (anxiety, depression, stress)</li>
+                        <li>See cohort mental health trends (are certain cohorts struggling more?)</li>
+                        <li>Integrate with counseling service data (students who have contacted us)</li>
+                        <li>See wait times for first appointment and track outcome improvements</li>
+                        <li>GDPR-compliant: sensitive data encrypted, only authorized staff access</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>AI Governance Module</h3>
+
+            <div class="user-story">
+                <div><span class="story-id">AI-001</span><span class="story-title">Institutional AI Policy Assessment</span></div>
+                <div class="story-narrative">As a CTO, I want to assess our current AI use and receive recommendations for institutional policy so we can govern AI responsibly.</div>
+                <div class="acceptance-criteria">
+                    <h5>Acceptance Criteria:</h5>
+                    <ul>
+                        <li>Self-assessment questionnaire: where are we using AI?</li>
+                        <li>Output: comparison to benchmark policies from leading institutions</li>
+                        <li>Identify policy gaps (e.g., no assessment integrity framework)</li>
+                        <li>Recommended policy framework tailored to our institution</li>
+                        <li>Implementation roadmap with timelines and resource estimates</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="user-story">
+                <div><span class="story-id">AI-002</span><span class="story-title">Assessment Redesign Framework</span></div>
+                <div class="story-narrative">As a director of teaching and learning, I want guidance on redesigning assessments now that students use AI so we can maintain academic integrity.</div>
+                <div class="acceptance-criteria">
+                    <h5>Acceptance Criteria:</h5>
+                    <ul>
+                        <li>Framework recommending assessment redesign strategies</li>
+                        <li>Identify which assessments are vulnerable to AI (essay writing) and which are resilient</li>
+                        <li>See case studies of assessment redesign from other institutions</li>
+                        <li>Rubric templates accounting for AI use in student work</li>
+                        <li>Training materials for tutors on fair assessment practices</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Development Sprints -->
+        <section id="sprints">
+            <h2>Development Sprint Breakdown (Phase 1)</h2>
+            
+            <h3>Sprint Structure: 2-Week Sprints (8 Sprints in Phase 1)</h3>
+            
+            <div class="timeline">
+                <div class="timeline-item">
+                    <h4>Sprint 1-2 (Weeks 1-4)</h4>
+                    <p><strong>Focus:</strong> AWS setup, Auth, DB schema, API foundation</p>
+                    <p><strong>Story Points:</strong> 8</p>
+                    <p>AWS infrastructure provisioning, OAuth 2.0 implementation, PostgreSQL schema design, API scaffolding</p>
+                </div>
+
+                <div class="timeline-item">
+                    <h4>Sprint 3 (Weeks 5-6)</h4>
+                    <p><strong>Focus:</strong> Time logging API, basic dashboard, researcher profile</p>
+                    <p><strong>Story Points:</strong> 12</p>
+                    <p>Time entry API endpoints, React dashboard skeleton, researcher profile data model</p>
+                </div>
+
+                <div class="timeline-item">
+                    <h4>Sprint 4 (Weeks 7-8)</h4>
+                    <p><strong>Focus:</strong> Time analytics, bottleneck identification, first institution integration</p>
+                    <p><strong>Story Points:</strong> 10</p>
+                    <p>Analytics engine, bottleneck visualization, PURE API integration</p>
+                </div>
+
+                <div class="timeline-item">
+                    <h4>Sprint 5 (Weeks 9-10)</h4>
+                    <p><strong>Focus:</strong> Research admin dashboard v1, grant management, testing</p>
+                    <p><strong>Story Points:</strong> 13</p>
+                    <p>Grant lifecycle tracking, dashboard UI refinement, integration tests</p>
+                </div>
+
+                <div class="timeline-item">
+                    <h4>Sprint 6 (Weeks 11-12)</h4>
+                    <p><strong>Focus:</strong> Beta customer onboarding, feedback incorporation, security hardening</p>
+                    <p><strong>Story Points:</strong> 12</p>
+                    <p>Customer data migration, security audit, feedback loop integration</p>
+                </div>
+
+                <div class="timeline-item">
+                    <h4>Sprint 7-8 (Weeks 13-16)</h4>
+                    <p><strong>Focus:</strong> Performance optimization, monitoring, launch readiness, documentation</p>
+                    <p><strong>Story Points:</strong> 14</p>
+                    <p>Load testing, monitoring setup (Datadog), API documentation, user guides</p>
+                </div>
+            </div>
+
+            <h3>Team Structure & Velocity</h3>
+            <div class="summary-card">
+                <p><strong>Recommended team for Phase 1:</strong></p>
+                <ul>
+                    <li>1 Scrum Master / Product Manager (you: oversee roadmap, institutional relationships, consulting)</li>
+                    <li>1 Principal Engineer / Tech Lead (backend architecture, security, database design)</li>
+                    <li>2 Backend Engineers (Java/Spring Boot, PostgreSQL, API development)</li>
+                    <li>1 Frontend Engineer (React, dashboard, data visualization)</li>
+                    <li>1 DevOps/Infrastructure Engineer (AWS, CI/CD, security)</li>
+                    <li>1 QA/Test Automation Engineer (Selenium, performance testing, security testing)</li>
+                </ul>
+                <p style="margin-top: 1rem;"><strong>Target velocity:</strong> 40-50 story points per 2-week sprint</p>
+            </div>
+
+            <h3>Definition of Done</h3>
+            <ul>
+                <li>Code written with &gt;80% test coverage</li>
+                <li>Unit tests pass, integration tests pass</li>
+                <li>Code reviewed by second engineer, approved</li>
+                <li>Security review for any new auth/data access code</li>
+                <li>Performance verified &lt;500ms for dashboard queries</li>
+                <li>Database migrations backward-compatible</li>
+                <li>API documentation updated (Swagger/OpenAPI)</li>
+                <li>At least one acceptance criterion demonstrated in staging</li>
+                <li>No blocking bugs introduced</li>
+                <li>User story link in git commits</li>
+            </ul>
+        </section>
+
+        <!-- KPIs and Success Metrics -->
+        <section id="kpis">
+            <h2>Success Metrics & KPIs</h2>
+
+            <h3>Product Metrics</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Metric</th>
+                        <th>Phase 1 Target</th>
+                        <th>Phase 4 Target</th>
+                        <th>Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Paying Customers</td>
+                        <td>3-5 (beta)</td>
+                        <td>20-25</td>
+                        <td>Mix of Russell Group + post-92</td>
+                    </tr>
+                    <tr>
+                        <td>Platform DAU</td>
+                        <td>200-300 researchers</td>
+                        <td>3,000-5,000</td>
+                        <td>Time tracking, analytics, grant mgmt</td>
+                    </tr>
+                    <tr>
+                        <td>Dashboard Uptime</td>
+                        <td>99.5%</td>
+                        <td>99.95%</td>
+                        <td>SLA commitment to institutions</td>
+                    </tr>
+                    <tr>
+                        <td>API Latency (p95)</td>
+                        <td>&lt;500ms</td>
+                        <td>&lt;300ms</td>
+                        <td>Dashboard responsiveness critical</td>
+                    </tr>
+                    <tr>
+                        <td>Customer Satisfaction (NPS)</td>
+                        <td>&gt;40</td>
+                        <td>&gt;60</td>
+                        <td>Quarterly surveys</td>
+                    </tr>
+                    <tr>
+                        <td>Churn Rate</td>
+                        <td>0% (beta)</td>
+                        <td>&lt;5% annual</td>
+                        <td>High switching costs, value stickiness</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Business Metrics</h3>
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-label">Annual Recurring Revenue (ARR)</div>
+                    <div class="kpi-value">£2-5M</div>
+                    <div class="kpi-label" style="font-size: 0.85rem; color: #999; margin-top: 0.5rem;">By Phase 4</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">Customer Acquisition Cost (CAC)</div>
+                    <div class="kpi-value">£10-15k</div>
+                    <div class="kpi-label" style="font-size: 0.85rem; color: #999; margin-top: 0.5rem;">Per institutional customer</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">Lifetime Value (LTV)</div>
+                    <div class="kpi-value">£80-150k</div>
+                    <div class="kpi-label" style="font-size: 0.85rem; color: #999; margin-top: 0.5rem;">3-5 year relationship</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">Net Revenue Retention</div>
+                    <div class="kpi-value">&gt;110%</div>
+                    <div class="kpi-label" style="font-size: 0.85rem; color: #999; margin-top: 0.5rem;">Expansion + Advisory</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">Consulting Services Rate</div>
+                    <div class="kpi-value">£200-300/hr</div>
+                    <div class="kpi-label" style="font-size: 0.85rem; color: #999; margin-top: 0.5rem;">Billable rate, &gt;70% utilization</div>
+                </div>
+            </div>
+
+            <h3>Year 1 Customer Acquisition Strategy</h3>
+            <ul>
+                <li><strong>Q1 2026:</strong> Secure 3-5 beta customers (research-intensive Russell Group)</li>
+                <li><strong>Q1-Q2 2026:</strong> Free/discounted pilots (3 months) for testimonials & case studies</li>
+                <li><strong>Q2 2026:</strong> Launch consulting services practice (£50-100k per engagement)</li>
+                <li><strong>Q3 2026:</strong> 10-15 paying institutions, target £500k ARR</li>
+                <li><strong>Q4 2026:</strong> Expand to EU (research-intensive universities, Horizon Europe pain points)</li>
+            </ul>
+        </section>
+
+        <!-- Risk Register -->
+        <section id="risks">
+            <h2>Risk Register & Mitigation</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Risk</th>
+                        <th>Impact</th>
+                        <th>Probability</th>
+                        <th>Score</th>
+                        <th>Mitigation</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Institutional buy-in for sensitive data</td>
+                        <td style="background: #ffe6e6;">High</td>
+                        <td style="background: #fff3cd;">Medium</td>
+                        <td style="background: #fff3cd;"><strong>6</strong></td>
+                        <td>SOC 2, GDPR compliance certs, transparent data governance</td>
+                    </tr>
+                    <tr>
+                        <td>Integration complexity with legacy systems</td>
+                        <td style="background: #fff3cd;">Medium</td>
+                        <td style="background: #ffe6e6;">High</td>
+                        <td style="background: #fff3cd;"><strong>6</strong></td>
+                        <td>Dedicated integration team, standard connectors, staged rollouts</td>
+                    </tr>
+                    <tr>
+                        <td>Competing products (Tableau, Microsoft)</td>
+                        <td style="background: #fff3cd;">Medium</td>
+                        <td style="background: #fff3cd;">Medium</td>
+                        <td style="background: #e6f7ff;"><strong>4</strong></td>
+                        <td>Deep sector expertise, consulting services, network effects</td>
+                    </tr>
+                    <tr>
+                        <td>Key person risk (you)</td>
+                        <td style="background: #ffe6e6;">High</td>
+                        <td style="background: #e6f7ff;">Low</td>
+                        <td style="background: #e6f7ff;"><strong>2</strong></td>
+                        <td>Hire strong tech lead, documentation, process automation</td>
+                    </tr>
+                    <tr>
+                        <td>Market adoption slower than projected</td>
+                        <td style="background: #fff3cd;">Medium</td>
+                        <td style="background: #fff3cd;">Medium</td>
+                        <td style="background: #fff3cd;"><strong>4</strong></td>
+                        <td>Customer validation early, adjust messaging, consulting pivot if needed</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="callout warning">
+                <strong>Risk Monitoring:</strong> Conduct risk review at end of each sprint. Escalate any score &gt;6 immediately. Key person risk mitigation should start in Phase 1 by documenting all architecture decisions and processes.
+            </div>
+        </section>
+
+        <!-- Conclusion -->
+        <section>
+            <h2>Conclusion</h2>
+            <p>AcademicOS addresses a critical market need: universities facing existential financial and operational crises need strategic advisory support backed by data. By combining software analytics with professional services, you can capture both the SaaS market (£2-5M ARR potential) and high-margin consulting (£50-150k per engagement).</p>
+
+            <p>Your background as an SRE/enterprise architect is perfectly suited to building the robust, secure, scalable infrastructure that UK/EU universities demand. Your experience with test automation, microservices, and AWS will be differentiated strengths against competitors.</p>
+
+            <p>The 18-month roadmap is achievable with a small, focused team. Phase 1 (foundation + research admin) establishes product-market fit and early revenue. Phases 2-4 expand to financial, student, and AI modules while scaling the customer base and launching consulting services.</p>
+
+            <div class="callout success">
+                <strong>Next Steps:</strong>
+                <ol>
+                    <li>Validate the roadmap with 3-5 potential customers (interviews/calls)</li>
+                    <li>Refine personas and pricing based on feedback</li>
+                    <li>Hire founding team (Tech Lead, Backend Engineers, DevOps first)</li>
+                    <li>Begin Phase 1 development immediately</li>
+                    <li>Establish advisory board (former PVC, research administrator, edtech investor)</li>
+                </ol>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 AcademicOS. Institutional Intelligence Platform for UK/EU Universities.</p>
+        <p>This document is confidential and intended for internal use only.</p>
+    </footer>
+
+    <button class="back-to-top" onclick="scrollToTop()">↑</button>
+
+    <script>
+        // Navigation highlighting
+        window.addEventListener('scroll', () => {
+            const sections = document.querySelectorAll('section');
+            const navLinks = document.querySelectorAll('nav a');
+            
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (window.pageYOffset >= sectionTop - 300) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${current}`) {
+                    link.classList.add('active');
+                }
+            });
+
+            // Show/hide back to top button
+            const backToTop = document.querySelector('.back-to-top');
+            if (window.pageYOffset > 300) {
+                backToTop.classList.add('show');
+            } else {
+                backToTop.classList.remove('show');
+            }
+        });
+
+        // Smooth scroll
+        document.querySelectorAll('nav a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const target = document.querySelector(link.getAttribute('href'));
+                target.scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Tab functionality
+        const tabButtons = document.querySelectorAll('.tab-button');
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const tabGroup = button.parentElement;
+                const tabName = button.getAttribute('data-tab');
+                
+                // Remove active from all buttons in this group
+                tabGroup.querySelectorAll('.tab-button').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                
+                // Add active to clicked button
+                button.classList.add('active');
+                
+                // Hide all tabs in this group
+                const container = button.closest('.tabs');
+                container.querySelectorAll('.tab-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                
+                // Show selected tab
+                const selected = container.querySelector(`[data-content="${tabName}"]`);
+                if (selected) {
+                    selected.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
