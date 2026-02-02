@@ -6,6 +6,7 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
     "target": "ES2022",
     "sourceMap": true,
     "outDir": "./dist",
@@ -23,5 +24,7 @@
       "@common/*": ["src/common/*"],
       "@config/*": ["src/config/*"]
     }
-  }
+  },
+  "include": ["src/**/*", "api/**/*"],
+  "exclude": ["node_modules", "dist"]
 }
